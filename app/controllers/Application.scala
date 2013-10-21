@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc._
 import model.service.ImportService
-import org.joda.time.format.DateTimeFormatterBuilder
+import org.joda.time.format.DateTimeFormat
 
 object Application extends Controller {
 
@@ -15,13 +15,21 @@ object Application extends Controller {
     Ok("OK")
   }
 
-  def transactions(start: Option[String]) = Action {
-    val fmt = new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").toFormatter
-    val transactions = if (start.isDefined) {
-      val startDate = fmt.parseDateTime(start.get)
-      ImportService.transactions filterNot (_.date.isBefore(startDate))
-    } else {
-      ImportService.transactions
+  def transactions(start: Option[String], end: Option[String]) = Action {
+    val fmt = DateTimeFormat.forPattern("yyyyMMdd")
+    val transactions = (start, end) match {
+      case (Some(s), Some(e)) =>
+        val startDate = fmt.parseDateTime(s)
+        val endDate = fmt.parseDateTime(e)
+        ImportService.transactions filterNot (_.date.isBefore(startDate)) filterNot (_.date.isAfter(endDate))
+      case (Some(s), None) =>
+        val startDate = fmt.parseDateTime(s)
+        ImportService.transactions filterNot (_.date.isBefore(startDate))
+      case (None, Some(e)) =>
+        val endDate = fmt.parseDateTime(e)
+        ImportService.transactions filterNot (_.date.isAfter(endDate))
+      case (None, None) =>
+        ImportService.transactions
     }
     Ok(views.html.transactions(transactions))
   }
