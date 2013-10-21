@@ -1,0 +1,20 @@
+@(transactions: Seq[model.Transaction])
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Transactions</title>
+</head>
+<body>
+<table>
+    @for(transaction <- transactions){
+    <tr>
+        <td>@transaction.date</td>
+        <td>@transaction.description</td>
+        <td>@transaction.amount</td>
+    </tr>
+    }
+</table>
+</body>
+</html>

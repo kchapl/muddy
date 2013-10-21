@@ -6,6 +6,8 @@ import org.joda.time.format.DateTimeFormat
 
 object Application extends Controller {
 
+  private val fmt = DateTimeFormat.forPattern("yyyyMMdd")
+
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
@@ -15,21 +17,11 @@ object Application extends Controller {
     Ok("OK")
   }
 
-  def transactions(start: Option[String], end: Option[String]) = Action {
-    val fmt = DateTimeFormat.forPattern("yyyyMMdd")
-    val transactions = (start, end) match {
-      case (Some(s), Some(e)) =>
-        val startDate = fmt.parseDateTime(s)
-        val endDate = fmt.parseDateTime(e)
-        ImportService.transactions filterNot (_.date.isBefore(startDate)) filterNot (_.date.isAfter(endDate))
-      case (Some(s), None) =>
-        val startDate = fmt.parseDateTime(s)
-        ImportService.transactions filterNot (_.date.isBefore(startDate))
-      case (None, Some(e)) =>
-        val endDate = fmt.parseDateTime(e)
-        ImportService.transactions filterNot (_.date.isAfter(endDate))
-      case (None, None) =>
-        ImportService.transactions
+  def transactions(start: Option[String], end: Option[String], group: Option[String]) = Action {
+    val transactions = ImportService.transactions filterNot {
+      transaction => start exists (s => transaction.date.isBefore(fmt.parseDateTime(s)))
+    } filterNot {
+      transaction => end exists (e => transaction.date.isAfter(fmt.parseDateTime(e)))
     }
     Ok(views.html.transactions(transactions))
   }

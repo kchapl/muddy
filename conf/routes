@@ -9,4 +9,4 @@ GET     /                           controllers.Application.index
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET    /import          controllers.Application.doImport
-GET    /transactions    controllers.Application.transactions(start: Option[String], end: Option[String])
+GET    /transactions    controllers.Application.transactions(start: Option[String], end: Option[String], group: Option[String])
