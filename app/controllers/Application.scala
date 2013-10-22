@@ -1,29 +1,26 @@
 package controllers
 
 import play.api.mvc._
-import model.service.ImportService
-import org.joda.time.format.DateTimeFormat
+import model.service.TransactionRepository
 
 object Application extends Controller {
-
-  private val fmt = DateTimeFormat.forPattern("yyyyMMdd")
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def doImport() = Action {
-    ImportService.doImport()
-    Ok("OK")
-  }
-
   def transactions(start: Option[String], end: Option[String], group: Option[String]) = Action {
-    val transactions = ImportService.transactions filterNot {
-      transaction => start exists (s => transaction.date.isBefore(fmt.parseDateTime(s)))
-    } filterNot {
-      transaction => end exists (e => transaction.date.isAfter(fmt.parseDateTime(e)))
+    val view = group match {
+      case Some(g) =>
+        views.html.groupedTransactions {
+          TransactionRepository.getTransactionGroups(start, end, g)
+        }
+      case None =>
+        views.html.transactions {
+          TransactionRepository.getTransactions(start, end)
+        }
     }
-    Ok(views.html.transactions(transactions))
+    Ok(view)
   }
 
 }

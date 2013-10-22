@@ -1,18 +1,33 @@
-@(transactions: Seq[model.Transaction])
+@(txGroups: Seq[model.TransactionGroup])
 
 <!DOCTYPE html>
 
 <html>
 <head>
-    <title>Transactions</title>
+    <title>Transaction Groups</title>
 </head>
 <body>
 <table>
-    @for(transaction <- transactions){
+    @for(group <- txGroups){
     <tr>
-        <td>@transaction.date</td>
-        <td>@transaction.description</td>
-        <td>@transaction.amount</td>
+        <td>@group.name</td>
+        <td/>
+        <td/>
+    </tr>
+    <tr>
+        <td/>
+        <td>Deposits</td>
+        <td>@group.depositSum</td>
+    </tr>
+    <tr>
+        <td/>
+        <td>Expenses</td>
+        <td>@group.expenseSum</td>
+    </tr>
+    <tr>
+        <td/>
+        <td>Difference</td>
+        <td>@group.totalSum</td>
     </tr>
     }
 </table>
