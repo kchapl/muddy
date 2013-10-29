@@ -12,7 +12,7 @@ object TransactionRepository {
   private val yearFormat = DateTimeFormat.forPattern("yyyy")
 
   def getTransactions(start: Option[String], end: Option[String]): Seq[Transaction] = {
-    ImportService.transactions.view filterNot {
+    TransactionRepository2.all().view filterNot {
       tx => start exists (s => tx.date.isBefore(inputFormat.parseDateTime(s)))
     } filterNot {
       tx => end exists (e => tx.date.isAfter(inputFormat.parseDateTime(e)))
