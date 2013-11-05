@@ -11,6 +11,8 @@
     @for(transaction <- transactions){
     <tr>
         <td>@transaction.date</td>
+        <td>@transaction.category</td>
+        <td>@transaction.subcategory</td>
         <td><a href="/description/@helper.urlEncode(transaction.description)">@transaction.description</a></td>
         <td>@transaction.amount</td>
     </tr>

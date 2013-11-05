@@ -3,7 +3,11 @@ package model
 import org.joda.time.DateTime
 import BigDecimal.RoundingMode
 
-case class Transaction(date: DateTime, description: String, amount: Double)
+case class Transaction(date: DateTime,
+                       description: String,
+                       amount: Double,
+                       category: Option[String] = None,
+                       subcategory: Option[String] = None)
 
 case class TransactionGroup(name: String, transactions: Seq[Transaction]) {
 

@@ -1,13 +1,14 @@
 package controllers
 
 import play.api.mvc._
-import model.service.{ImportService, TransactionService}
+import model.service.{ImportMDService, TransactionService}
 import java.net.URLDecoder
 
 object Application extends Controller {
 
   def doImport() = Action {
-    ImportService.doImport()
+//    ImportService.doImport()
+    ImportMDService.doImport()
     Ok("OK")
   }
 

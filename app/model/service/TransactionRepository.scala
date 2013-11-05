@@ -14,8 +14,11 @@ object TransactionRepository {
   private val transaction = {
     get[String]("tx_date") ~
       get[String]("description") ~
-      get[Double]("amount") map {
-      case date ~ description ~ amount => Transaction(dateFormat.parseDateTime(date), description, amount)
+      get[Double]("amount") ~
+      get[String]("category") ~
+      get[String]("subcategory") map {
+      case date ~ description ~ amount ~ category ~ subcategory =>
+        Transaction(dateFormat.parseDateTime(date), description, amount, Option(category), Option(subcategory))
     }
   }
 
@@ -39,11 +42,14 @@ object TransactionRepository {
 
         if (!present) {
           SQL {
-            "insert into tx (tx_date, description, amount) values ({date}, {description}, {amount})"
+            "insert into tx (tx_date, description, amount, category, subcategory) " +
+              "values ({date}, {description}, {amount}, {category}, {subcategory})"
           }.on(
             'date -> dateString,
             'description -> tx.description,
-            'amount -> tx.amount
+            'amount -> tx.amount,
+            'category -> tx.category,
+            'subcategory -> tx.subcategory
           ).executeUpdate()
         }
     }
