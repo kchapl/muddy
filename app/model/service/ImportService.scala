@@ -21,19 +21,16 @@ object ImportMDService {
   private val dateFormat = DateTimeFormat.forPattern("dd/MM/yyyy")
 
   def doImport() {
-
-    val p=CsvParser[Date,Int,Int,Int,Int]
-    val prices=p.parseFile("abil.csv", hasHeader=true, delimiter="\t")
-
-
     for {
       line <- Source.fromFile(s"${sys.env("HOME")}/Desktop/mdExport.csv").getLines().toSeq.tail
-      parts = line split """,["$]"""
+      f0 = line take 10
+      f1 = line drop f0.length + 2 takeWhile (_ != '"')
+      f2 = line drop f0.length + f1.length + 5 takeWhile (_ != '"')
+      f3 = line drop f0.length + f1.length + f2.length + 7 takeWhile (_ != ',')
+      f4 = line drop f0.length + f1.length + f2.length + f3.length + 9 takeWhile (_ != '"')
+      f5 = line drop f0.length + f1.length + f2.length + f3.length + f4.length + 12 takeWhile (_ != '"')
     } {
-      println(line)
-      parts foreach println
-      val tx =
-        Transaction(dateFormat.parseDateTime(parts(0)), parts(2), parts(3).toDouble, Some(parts(4)), Some(parts(5)))
+      val tx = Transaction(dateFormat.parseDateTime(f0), f2, f3.toDouble, Some(f4), Some(f5))
       TransactionRepository.persist(tx)
     }
   }
