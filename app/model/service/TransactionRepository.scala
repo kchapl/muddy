@@ -15,10 +15,10 @@ object TransactionRepository {
     get[String]("tx_date") ~
       get[String]("description") ~
       get[Double]("amount") ~
-      get[String]("category") ~
-      get[String]("subcategory") map {
+      get[Option[String]]("category") ~
+      get[Option[String]]("subcategory") map {
       case date ~ description ~ amount ~ category ~ subcategory =>
-        Transaction(dateFormat.parseDateTime(date), description, amount, Option(category), Option(subcategory))
+        Transaction(dateFormat.parseDateTime(date), description, amount, category, subcategory)
     }
   }
 

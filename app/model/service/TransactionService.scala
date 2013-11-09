@@ -31,6 +31,14 @@ object TransactionService {
     getTransactions(start, end) filter (tx => tx.description == description)
   }
 
+  def getTransactionsByCategory(category: String, start: Option[String], end: Option[String]): Seq[Transaction] = {
+    getTransactions(start, end) filter (tx => tx.category.exists(_ == category))
+  }
+
+  def getTransactionsBySubcategory(category: String, subcategory: String, start: Option[String], end: Option[String]): Seq[Transaction] = {
+    getTransactions(start, end) filter (tx => tx.category.exists(_ == category) && tx.subcategory.exists(_ == subcategory))
+  }
+
   private def getTransactionGroups(transactions: Seq[Transaction], group: String): Seq[TransactionGroup] = {
     (transactions.groupBy {
       tx =>
@@ -52,6 +60,10 @@ object TransactionService {
 
   def getTransactionGroups(description: String, start: Option[String], end: Option[String], group: String): Seq[TransactionGroup] = {
     getTransactionGroups(getTransactions(description, start, end), group)
+  }
+
+  def getTransactionGroupsByCategory(category: String, start: Option[String], end: Option[String], group: String): Seq[TransactionGroup] = {
+    getTransactionGroups(getTransactionsByCategory(category, start, end), group)
   }
 
 }

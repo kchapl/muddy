@@ -36,3 +36,36 @@ object ImportMDService {
   }
 
 }
+
+object ImportMSMService {
+
+  private val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
+
+  def doImport() {
+    val lines = Source.fromFile(s"${sys.env("HOME")}/Desktop/archive.csv")(io.Codec("iso-8859-1")).getLines().toSeq
+    for {
+      line <- lines.drop(6).dropRight(3)
+    } {
+      val parts = line.split(",")
+      val fields =
+        if (parts.size == 7) parts
+        else if (parts(2).startsWith( """"""") && parts(3).endsWith( """"""")) {
+          Array(parts(0), parts(1), parts(2) + parts(3), parts(4), parts(5), parts(6), parts(7))
+        }
+        else if (parts(2).startsWith( """"""") && parts(4).endsWith( """"""")) {
+          Array(parts(0), parts(1), parts(2) + parts(3) + parts(4), parts(5), parts(6), parts(7), parts(8))
+        }
+        else {
+          Array(parts(0), parts(1), parts(2), parts(3), parts(4), parts(parts.length - 2), parts(parts.length - 1))
+        }
+      val category = fields(5).split(":").map(_.trim)
+      val tx =
+        if (category.size == 2)
+          Transaction(dateFormat.parseDateTime(fields(1)), fields(2), fields(6).toDouble, Some(category(0)), Some(category(1)))
+        else
+          Transaction(dateFormat.parseDateTime(fields(1)), fields(2), fields(6).toDouble, Some(category(0)))
+      TransactionRepository.persist(tx)
+    }
+  }
+
+}

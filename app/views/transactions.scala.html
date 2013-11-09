@@ -8,13 +8,16 @@
 </head>
 <body>
 <table>
-    @for(transaction <- transactions){
+    @for(tx <- transactions){
     <tr>
-        <td>@transaction.date</td>
-        <td>@transaction.category</td>
-        <td>@transaction.subcategory</td>
-        <td><a href="/description/@helper.urlEncode(transaction.description)">@transaction.description</a></td>
-        <td>@transaction.amount</td>
+        <td>@tx.date</td>
+        <td>@tx.category.map { cat => <a href="@routes.Application.category(cat, None, None, None)">@tx.category</a>}
+        </td>
+        <td>@tx.subcategory.map { subcat => <a
+                href="@routes.Application.subcategory(tx.category.get, subcat, None, None, None)">@tx.subcategory</a>}
+        </td>
+        <td><a href="@routes.Application.description(tx.description, None, None, None)">@tx.description</a></td>
+        <td>@tx.amount</td>
     </tr>
     }
 </table>
