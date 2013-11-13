@@ -11,4 +11,6 @@ GET    /description/:desc           controllers.Application.description(desc: St
 GET    /category/:cat               controllers.Application.category(cat: String, start: Option[String], end: Option[String], group: Option[String])
 GET    /category/:cat/:subcat       controllers.Application.subcategory(cat: String, subcat: String, start: Option[String], end: Option[String], group: Option[String])
 
+GET    /summary                     controllers.Application.summary
+
 GET    /import                      controllers.Application.doImport

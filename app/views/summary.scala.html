@@ -1,0 +1,19 @@
+@(categories: Seq[model.TransactionGroup])
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Summary</title>
+</head>
+<body>
+<table>
+    @for(category <- categories){
+    <tr>
+        <td>@category.name</td>
+        <td>@category.totalSum</td>
+    </tr>
+    }
+</table>
+</body>
+</html>

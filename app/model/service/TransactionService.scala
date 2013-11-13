@@ -2,6 +2,7 @@ package model.service
 
 import model.{Transaction, TransactionGroup}
 import org.joda.time.format.DateTimeFormat
+import org.joda.time.DateTime
 
 object TransactionService {
 
@@ -64,6 +65,19 @@ object TransactionService {
 
   def getTransactionGroupsByCategory(category: String, start: Option[String], end: Option[String], group: String): Seq[TransactionGroup] = {
     getTransactionGroups(getTransactionsByCategory(category, start, end), group)
+  }
+
+  def getSummary(): Seq[TransactionGroup] = {
+    val e = new DateTime().withTimeAtStartOfDay()
+    val s = e.minusMonths(1)
+    val x = getTransactions(Some(inputFormat.print(s.getMillis)), Some(inputFormat.print(e.getMillis)))
+    getCategories(x)
+  }
+
+  def getCategories(transactions: Seq[Transaction]): Seq[TransactionGroup] = {
+    transactions.groupBy(_.category.getOrElse("Uncategorised")).map {
+      case (cat, txs) => TransactionGroup(cat, txs)
+    }.toSeq
   }
 
 }

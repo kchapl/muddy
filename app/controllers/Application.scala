@@ -48,4 +48,8 @@ object Application extends Controller {
     Ok(view)
   }
 
+  def summary() = Action {
+    Ok(views.html.summary(TransactionService.getSummary))
+  }
+
 }
