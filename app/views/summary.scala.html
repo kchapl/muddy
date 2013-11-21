@@ -1,4 +1,4 @@
-@(categories: Seq[model.TransactionGroup])
+@(summary: model.Summary)
 
 <!DOCTYPE html>
 
@@ -7,11 +7,23 @@
     <title>Summary</title>
 </head>
 <body>
+<p>@summary.startDate</p>
+<p>@summary.endDate</p>
+<p>@summary.lastTransactionDate</p>
 <table>
-    @for(category <- categories){
+    @for(tx <- summary.transactions){
     <tr>
-        <td>@category.name</td>
-        <td>@category.totalSum</td>
+        <td>@tx.date</td>
+        <td>@tx.description</td>
+        <td>@tx.amount</td>
+    </tr>
+    }
+</table>
+<table>
+    @for(categorySummary <- summary.categorySummaries){
+    <tr>
+        <td>@categorySummary.category</td>
+        <td>@categorySummary.amount</td>
     </tr>
     }
 </table>

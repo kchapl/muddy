@@ -22,7 +22,7 @@ object ImportMDService {
 
   def doImport() {
     for {
-      line <- Source.fromFile(s"${sys.env("HOME")}/Desktop/mdExport.csv").getLines().toSeq.tail
+      line <- Source.fromFile(s"${sys.env("HOME")}/Documents/Money/Data/Archive/mdExport.csv").getLines().toSeq.tail
       f0 = line take 10
       f1 = line drop f0.length + 2 takeWhile (_ != '"')
       f2 = line drop f0.length + f1.length + 5 takeWhile (_ != '"')
@@ -42,7 +42,7 @@ object ImportMSMService {
   private val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
 
   def doImport() {
-    val lines = Source.fromFile(s"${sys.env("HOME")}/Desktop/archive.csv")(io.Codec("iso-8859-1")).getLines().toSeq
+    val lines = Source.fromFile(s"${sys.env("HOME")}/Documents/Money/Data/Archive/msm.csv")(io.Codec("iso-8859-1")).getLines().toSeq
     for {
       line <- lines.drop(6).dropRight(3)
     } {

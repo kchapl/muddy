@@ -1,6 +1,6 @@
 package model.service
 
-import model.{Transaction, TransactionGroup}
+import model.{Summary, Transaction, TransactionGroup}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.DateTime
 
@@ -67,11 +67,8 @@ object TransactionService {
     getTransactionGroups(getTransactionsByCategory(category, start, end), group)
   }
 
-  def getSummary(): Seq[TransactionGroup] = {
-    val e = new DateTime().withTimeAtStartOfDay()
-    val s = e.minusMonths(1)
-    val x = getTransactions(Some(inputFormat.print(s.getMillis)), Some(inputFormat.print(e.getMillis)))
-    getCategories(x)
+  def getSummary(): Summary = {
+    new Summary
   }
 
   def getCategories(transactions: Seq[Transaction]): Seq[TransactionGroup] = {
