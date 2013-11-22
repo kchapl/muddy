@@ -1,4 +1,4 @@
-name := "money"
+name := "muddy"
 
 version := "1.0-SNAPSHOT"
 
