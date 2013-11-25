@@ -9,8 +9,6 @@ class Summary {
 
   private val inputFormat = DateTimeFormat.forPattern("yyyyMMdd")
 
-  private def round(num: Double) = BigDecimal(num).setScale(2, RoundingMode.HALF_UP).toDouble
-
   val endDate: DateTime = new DateTime().withTimeAtStartOfDay()
   val startDate: DateTime = endDate.minusMonths(1)
 
@@ -27,6 +25,11 @@ class Summary {
       }
     }.toList
   }
+
+  private def sum(p: Double => Boolean) = round(transactions.map(_.amount).filter(p).sum)
+  val paymentsTotalAmount = sum(_ < 0)
+  val depositsTotalAmount = sum(_ > 0)
+  val difference = sum(_ => true)
 }
 
 case class CategorySummary(category: String, amount: Double)
