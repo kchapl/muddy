@@ -24,6 +24,14 @@ object TransactionService {
     }
   }
 
+  private def getTransactions(p: Transaction => Boolean): Seq[Transaction] = {
+    TransactionRepository.all() filter p
+  }
+
+  def getTransactions(start: DateTime, end: DateTime): Seq[Transaction] = {
+    getTransactions(tx => !tx.date.isBefore(start) && !tx.date.isAfter(end))
+  }
+
   def getTransactions(start: Option[String], end: Option[String]): Seq[Transaction] = {
     filterEnd(filterStart(TransactionRepository.all(), start), end)
   }

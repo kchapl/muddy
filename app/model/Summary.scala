@@ -13,23 +13,32 @@ class Summary {
   val startDate: DateTime = endDate.minusMonths(1)
 
   val transactions: List[Transaction] = TransactionService.getTransactions(
-    Some(inputFormat.print(startDate.getMillis)), Some(inputFormat.print(endDate.getMillis))
+    start = startDate, end = endDate
+  ).toList.sortBy(_.date.getMillis)
+
+  private val prevTransactions: List[Transaction] = TransactionService.getTransactions(
+    start = startDate.minusMonths(1), end = endDate.minusMonths(1)
   ).toList.sortBy(_.date.getMillis)
 
   val lastTransactionDate: Option[DateTime] = transactions.lastOption.map(_.date)
 
   val categorySummaries: List[CategorySummary] = {
-    transactions.groupBy(_.category).map {
+    val by = transactions.groupBy(_.category).toList
+    by.map {
       case (category, txs) => {
-        CategorySummary(category getOrElse "uncategorised", round(txs.map(_.amount).sum))
+        val name = category getOrElse "uncategorised"
+        val currAmt = round(txs.map(_.amount).sum)
+        val prevAmt = round(txs.map(_.amount).sum)
+        CategorySummary(name, currAmt, prevAmt)
       }
     }.toList
   }
 
   private def sum(p: Double => Boolean) = round(transactions.map(_.amount).filter(p).sum)
+
   val paymentsTotalAmount = sum(_ < 0)
   val depositsTotalAmount = sum(_ > 0)
   val difference = sum(_ => true)
 }
 
-case class CategorySummary(category: String, amount: Double)
+case class CategorySummary(category: String, currentAmount: Double, previousAmount: Double)

@@ -27,7 +27,8 @@
     @for(categorySummary <- summary.categorySummaries){
     <tr>
         <td>@categorySummary.category</td>
-        <td>@categorySummary.amount</td>
+        <td>@categorySummary.currentAmount</td>
+        <td>@categorySummary.previousAmount</td>
     </tr>
     }
 </table>
