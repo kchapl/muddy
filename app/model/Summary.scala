@@ -2,12 +2,8 @@ package model
 
 import org.joda.time.DateTime
 import model.service.TransactionService
-import org.joda.time.format.DateTimeFormat
-import scala.math.BigDecimal.RoundingMode
 
 class Summary {
-
-  private val inputFormat = DateTimeFormat.forPattern("yyyyMMdd")
 
   val endDate: DateTime = new DateTime().withTimeAtStartOfDay()
   val startDate: DateTime = endDate.minusMonths(1)
@@ -23,22 +19,31 @@ class Summary {
   val lastTransactionDate: Option[DateTime] = transactions.lastOption.map(_.date)
 
   val categorySummaries: List[CategorySummary] = {
-    val by = transactions.groupBy(_.category).toList
-    by.map {
+    val prevCategories = prevTransactions.groupBy(_.category)
+    transactions.groupBy(_.category).map {
       case (category, txs) => {
         val name = category getOrElse "uncategorised"
         val currAmt = round(txs.map(_.amount).sum)
-        val prevAmt = round(txs.map(_.amount).sum)
+        val prevTxs = prevCategories.get(category).getOrElse(Nil)
+        val prevAmt = round(prevTxs.map(_.amount).sum)
         CategorySummary(name, currAmt, prevAmt)
       }
     }.toList
   }
 
-  private def sum(p: Double => Boolean) = round(transactions.map(_.amount).filter(p).sum)
+  private def sumFiltered(p: Double => Boolean) = round(transactions.map(_.amount).filter(p).sum)
 
-  val paymentsTotalAmount = sum(_ < 0)
-  val depositsTotalAmount = sum(_ > 0)
-  val difference = sum(_ => true)
+  val paymentsTotalAmount = sumFiltered(_ < 0)
+  val depositsTotalAmount = sumFiltered(_ > 0)
+  val difference = sumFiltered(_ => true)
 }
 
-case class CategorySummary(category: String, currentAmount: Double, previousAmount: Double)
+case class CategorySummary(category: String, currentAmount: Double, previousAmount: Double) {
+
+  val difference = previousAmount - currentAmount
+
+  val percentageDifference = {
+    if (previousAmount == 0) 999
+    else difference / previousAmount
+  }
+}
