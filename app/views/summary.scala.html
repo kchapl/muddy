@@ -1,6 +1,6 @@
 @(summary: model.Summary)
 @import org.joda.time.format.DateTimeFormat
-@defining(DateTimeFormat.forPattern("EEE dd MMM yyyy")) { dateFormatter =>
+@defining((DateTimeFormat.forPattern("EEE dd MMM yyyy"), DateTimeFormat.forPattern("yyyyMMdd"))) { (dateFormatter, dateParamFormatter) =>
 
 <!DOCTYPE html>
 
@@ -26,7 +26,7 @@
 <table>
     @for(categorySummary <- summary.categorySummaries){
     <tr>
-        <td>@categorySummary.category</td>
+        <td><a href="@routes.Application.category(categorySummary.category, None, None, None)">@categorySummary.category</a></td>
         <td>@categorySummary.currentAmount</td>
         <td>@categorySummary.difference</td>
         <td>@categorySummary.percentageDifference</td>
