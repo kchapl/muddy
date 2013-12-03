@@ -12,24 +12,45 @@
             </head>
             <body>
                 <p><b>@dateFormatter.print(summary.startDate) &mdash; @dateFormatter.print(summary.endDate)</b><br/>
-                Last transaction: @summary.lastTransactionDate.map { date => @dateFormatter.print(date)}</p>
+                    Last transaction: @summary.lastTransactionDate.map { date => @dateFormatter.print(date)}</p>
                 <table class="table table-striped table-condensed">
-                @for(categorySummary <- summary.categorySummaries) {
+                    @for(categorySummary <- summary.categorySummaries) {
+                        <tr>
+                            <td><a href="@routes.Application.category(categorySummary.category, Some(dateParamFormatter.print(summary.startDate)), Some(dateParamFormatter.print(summary.endDate)), None)">@categorySummary.category</a></td>
+                            <td>@categorySummary.currentAmount</td>
+                            <td>@if(categorySummary.difference > 0) {
+                                <span class="glyphicon glyphicon-arrow-up" style="color : green">} else {
+                                @if(categorySummary.difference < 0) {
+                                    <span class="glyphicon glyphicon-arrow-down" style="color : red">} else {
+                                    <span class="glyphicon glyphicon-minus" style="color : #FFBF00">}
+                            } @categorySummary.difference (@categorySummary.percentageDifference%)</span></td>
+                            <td>@categorySummary.yearDifference (@categorySummary.percentageYearDifference%)</td>
+                        </tr>
+                    }
                     <tr>
-                        <td><a href="@routes.Application.category(categorySummary.category, Some(dateParamFormatter.print(summary.startDate)), Some(dateParamFormatter.print(summary.endDate)), None)">@categorySummary.category</a></td>
-                        <td>@categorySummary.currentAmount</td>
-                        <td>@if(categorySummary.difference > 0) {<span class="glyphicon glyphicon-arrow-up" style="color:green">} else {@if(categorySummary.difference < 0) {<span class="glyphicon glyphicon-arrow-down" style="color:red">} else {<span class="glyphicon glyphicon-minus" style="color:#FFBF00">}} @categorySummary.difference (@categorySummary.percentageDifference%)</span></td>
-                        <td>@categorySummary.yearDifference (@categorySummary.percentageYearDifference%)</td>
+                        <td>Total Payments</td>
+                        <td>@summary.paymentsTotalAmount</td>
                     </tr>
-                }
+                    <tr>
+                        <td>Total Deposits</td>
+                        <td>@summary.depositsTotalAmount</td>
+                    </tr>
+                    <tr>
+                        <td>Total Difference</td>
+                        <td>@summary.difference</td>
+                        <td>@summary.differencePreviousMonth (@summary.percentageDifferencePreviousMonth%)</td>
+                        <td>@summary.differencePreviousYear (@summary.percentageDifferencePreviousYear%)</td>
+                    </tr>
+                    <tr>
+                        <td>Total Income</td>
+                    </tr>
+                    <tr>
+                        <td>Total Outgoings</td>
+                    </tr>
+                    <tr>
+                        <td>Total Change</td>
+                    </tr>
                 </table>
-                <p>@summary.paymentsTotalAmount</p>
-                <p>@summary.depositsTotalAmount</p>
-                <p>@summary.difference</p>
-                <p>@summary.differencePreviousMonth</p>
-                <p>@summary.percentageDifferencePreviousMonth</p>
-                <p>@summary.differencePreviousYear</p>
-                <p>@summary.percentageDifferencePreviousYear</p>
             </body>
         </html>
     }
