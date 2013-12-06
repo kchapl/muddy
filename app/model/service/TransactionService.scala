@@ -75,10 +75,6 @@ object TransactionService {
     getTransactionGroups(getTransactionsByCategory(category, start, end), group)
   }
 
-  def getSummary(): Summary = {
-    new Summary
-  }
-
   def getCategories(transactions: Seq[Transaction]): Seq[TransactionGroup] = {
     transactions.groupBy(_.category.getOrElse("Uncategorised")).map {
       case (cat, txs) => TransactionGroup(cat, txs)

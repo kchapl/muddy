@@ -2,6 +2,7 @@ package controllers
 
 import play.api.mvc._
 import model.service.{ImportMSMService, ImportMDService, TransactionService}
+import model.Summary
 
 object Application extends Controller {
 
@@ -49,7 +50,7 @@ object Application extends Controller {
   }
 
   def summary() = Action {
-    Ok(views.html.summary(TransactionService.getSummary))
+    Ok(views.html.summary(Summary()))
   }
 
 }

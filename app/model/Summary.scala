@@ -7,10 +7,15 @@ object Summary {
 
   def apply(): Summary = {
 
-    def sum(txs: Seq[Transaction])(p: Double => Boolean) = round(txs.map(_.amount).filter(p).sum)
+    def sum(txs: Seq[Transaction])(p: Transaction => Boolean) = round(txs.filter(p).map(_.amount).sum)
     def sumAll(txs: Seq[Transaction]) = sum(txs)(_ => true)
-    def sumPayments(txs: Seq[Transaction]) = sum(txs)(_ > 0)
-    def sumDeposits(txs: Seq[Transaction]) = sum(txs)(_ < 0)
+    def sumPayments(txs: Seq[Transaction]) = sum(txs)(_.amount > 0)
+    def sumDeposits(txs: Seq[Transaction]) = sum(txs)(_.amount < 0)
+    def sumRelevant(txs: Seq[Transaction]) = sum(txs) {
+      tx =>
+        val irrelevant = Seq("todo")
+        irrelevant contains tx.category
+    }
 
     val endDate = new DateTime().withTimeAtStartOfDay()
     val startDate = endDate.minusMonths(1)
@@ -52,7 +57,20 @@ object Summary {
       monthYearAgo = sumAll(prevYearTransactions)
     )
 
-    Summary(endDate, startDate, lastTransactionDate, categorySummaries, allPayments, allDeposits, total)
+    val income = Amount(0, 0, 0)
+    val outgoings = Amount(0, 0, 0)
+    val relevantTotal = Amount(0, 0, 0)
+
+    Summary(startDate,
+      endDate,
+      lastTransactionDate,
+      categorySummaries,
+      allPayments,
+      allDeposits,
+      total,
+      income,
+      outgoings,
+      relevantTotal)
   }
 }
 
@@ -62,16 +80,24 @@ case class Summary(startDate: DateTime,
                    categorySummaries: List[CategorySummary],
                    allPayments: Amount,
                    allDeposits: Amount,
-                   total: Amount)
+                   total: Amount,
+                   income: Amount,
+                   outgoings: Amount,
+                   relevantTotal: Amount)
 
 case class CategorySummary(category: String, amount: Amount)
 
 case class Difference(currentValue: Double, previousValue: Double) {
+
   val absolute: Double = currentValue - previousValue
+
   val percentage = {
     if (previousValue == 0) 999
     else absolute / previousValue
   }
+
+  val isIncrease = absolute > 0
+  val isDecrease = absolute < 0
 }
 
 case class Amount(currentMonth: Double, previousMonth: Double, monthYearAgo: Double) {
