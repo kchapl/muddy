@@ -1,5 +1,16 @@
 @(summary: model.Summary)
 @import org.joda.time.format.DateTimeFormat
+
+@present(diff: model.Difference) = {
+<td>@if(diff.isIncrease) {
+  <span class="glyphicon glyphicon-arrow-up" style="color : green">} else {
+    @if(diff.isDecrease) {
+      <span class="glyphicon glyphicon-arrow-down" style="color : red">} else {
+        <span class="glyphicon glyphicon-minus" style="color : #FFBF00">}
+      } £@("%.2f".format(diff.absolute))
+    (@diff.percentage%)</span></td>
+}
+
 @defining(DateTimeFormat.forPattern("EEE dd MMM yyyy")) { dateFormatter =>
     @defining(DateTimeFormat.forPattern("yyyyMMdd")) { dateParamFormatter =>
 
@@ -18,24 +29,19 @@
                         <tr>
                             <td><a href="@routes.Application.category(categorySummary.category, Some(dateParamFormatter.print(summary.startDate)), Some(dateParamFormatter.print(summary.endDate)), None)">@categorySummary.category</a></td>
                             <td>@categorySummary.amount.currentMonth</td>
-                            <td>@if(categorySummary.amount.differenceInMonth.isIncrease) {
-                                <span class="glyphicon glyphicon-arrow-up" style="color : green">} else {
-                                @if(categorySummary.amount.differenceInMonth.isDecrease) {
-                                    <span class="glyphicon glyphicon-arrow-down" style="color : red">} else {
-                                    <span class="glyphicon glyphicon-minus" style="color : #FFBF00">}
-                            } @categorySummary.amount.differenceInMonth.absolute
-                                (@categorySummary.amount.differenceInMonth.percentage%)</span></td>
-                            <td>@categorySummary.amount.differenceInYear.absolute
-                                (@categorySummary.amount.differenceInYear.percentage%)</td>
+                            <td>*@categorySummary.amount.previousMonth*</td>
+                            <td>**@categorySummary.amount.monthYearAgo**</td>
+                            @present(categorySummary.amount.differenceInMonth)
+                            @present(categorySummary.amount.differenceInYear)
                         </tr>
                     }
                     <tr>
                         <td>Total Payments</td>
                         <td>@summary.allPayments.currentMonth</td>
-                        <td>@summary.allPayments.differenceInMonth.absolute
-                            (@summary.allPayments.differenceInMonth.percentage%)</td>
-                        <td>@summary.allPayments.differenceInYear.absolute
-                            (@summary.allPayments.differenceInYear.percentage%)</td>
+                        <td>*@summary.allPayments.previousMonth*</td>
+                        <td>**@summary.allPayments.monthYearAgo**</td>
+                        @present(summary.allPayments.differenceInMonth)
+                        @present(summary.allPayments.differenceInYear)
                     <tr>
                         <td>Total Deposits</td>
                         <td>@summary.allDeposits.currentMonth</td>

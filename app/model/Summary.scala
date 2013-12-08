@@ -2,6 +2,7 @@ package model
 
 import org.joda.time.DateTime
 import model.service.TransactionService
+import math.abs
 
 object Summary {
 
@@ -9,12 +10,12 @@ object Summary {
 
     def sum(txs: Seq[Transaction])(p: Transaction => Boolean) = round(txs.filter(p).map(_.amount).sum)
     def sumAll(txs: Seq[Transaction]) = sum(txs)(_ => true)
-    def sumPayments(txs: Seq[Transaction]) = sum(txs)(_.amount > 0)
-    def sumDeposits(txs: Seq[Transaction]) = sum(txs)(_.amount < 0)
+    def sumPayments(txs: Seq[Transaction]) = sum(txs)(_.amount < 0)
+    def sumDeposits(txs: Seq[Transaction]) = sum(txs)(_.amount > 0)
     def sumRelevant(txs: Seq[Transaction]) = sum(txs) {
       tx =>
         val irrelevant = Seq("todo")
-        irrelevant contains tx.category
+        !(irrelevant contains tx.category)
     }
 
     val endDate = new DateTime().withTimeAtStartOfDay()
@@ -89,15 +90,16 @@ case class CategorySummary(category: String, amount: Amount)
 
 case class Difference(currentValue: Double, previousValue: Double) {
 
-  val absolute: Double = currentValue - previousValue
+  val diff: Double = round(currentValue - previousValue)
+  val absolute: Double = abs(diff)
 
   val percentage = {
-    if (previousValue == 0) 999
-    else absolute / previousValue
+    if (previousValue == 0) Int.MaxValue
+    else abs(round(diff / previousValue * 100))
   }
 
-  val isIncrease = absolute > 0
-  val isDecrease = absolute < 0
+  val isIncrease = diff > 0
+  val isDecrease = diff < 0
 }
 
 case class Amount(currentMonth: Double, previousMonth: Double, monthYearAgo: Double) {
