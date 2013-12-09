@@ -28,55 +28,55 @@
                     @for(categorySummary <- summary.categorySummaries) {
                         <tr>
                             <td><a href="@routes.Application.category(categorySummary.category, Some(dateParamFormatter.print(summary.startDate)), Some(dateParamFormatter.print(summary.endDate)), None)">@categorySummary.category</a></td>
-                            <td>@categorySummary.amount.currentMonth</td>
-                            <td>*@categorySummary.amount.previousMonth*</td>
-                            <td>**@categorySummary.amount.monthYearAgo**</td>
-                            @present(categorySummary.amount.differenceInMonth)
-                            @present(categorySummary.amount.differenceInYear)
+                            <td>@categorySummary.amount.currentPeriod</td>
+                            <td>*@categorySummary.amount.previousPeriod*</td>
+                            <td>**@categorySummary.amount.periodYearAgo**</td>
+                            @present(categorySummary.amount.differenceInPreviousPeriod)
+                            @present(categorySummary.amount.differenceInSamePeriodLastYear)
                         </tr>
                     }
                     <tr>
                         <td>Total Payments</td>
-                        <td>@summary.allPayments.currentMonth</td>
-                        <td>*@summary.allPayments.previousMonth*</td>
-                        <td>**@summary.allPayments.monthYearAgo**</td>
-                        @present(summary.allPayments.differenceInMonth)
-                        @present(summary.allPayments.differenceInYear)
+                        <td>@summary.allPayments.currentPeriod</td>
+                        <td>*@summary.allPayments.previousPeriod*</td>
+                        <td>**@summary.allPayments.periodYearAgo**</td>
+                        @present(summary.allPayments.differenceInPreviousPeriod)
+                        @present(summary.allPayments.differenceInSamePeriodLastYear)
                     <tr>
                         <td>Total Deposits</td>
-                        <td>@summary.allDeposits.currentMonth</td>
-                        <td>@summary.allDeposits.differenceInMonth.absolute
-                            (@summary.allDeposits.differenceInMonth.percentage%)</td>
-                        <td>@summary.allDeposits.differenceInYear.absolute
-                            (@summary.allDeposits.differenceInYear.percentage%)</td>
+                        <td>@summary.allDeposits.currentPeriod</td>
+                        <td>@summary.allDeposits.differenceInPreviousPeriod.absolute
+                            (@summary.allDeposits.differenceInPreviousPeriod.percentage%)</td>
+                        <td>@summary.allDeposits.differenceInSamePeriodLastYear.absolute
+                            (@summary.allDeposits.differenceInSamePeriodLastYear.percentage%)</td>
                     </tr>
                     <tr>
                         <td>Total Difference</td>
-                        <td>@summary.total.currentMonth</td>
-                        <td>@summary.total.differenceInMonth.absolute (@summary.total.differenceInMonth.percentage%)</td>
-                        <td>@summary.total.differenceInYear.absolute (@summary.total.differenceInYear.percentage%)</td>
+                        <td>@summary.total.currentPeriod</td>
+                        <td>@summary.total.differenceInPreviousPeriod.absolute (@summary.total.differenceInPreviousPeriod.percentage%)</td>
+                        <td>@summary.total.differenceInSamePeriodLastYear.absolute (@summary.total.differenceInSamePeriodLastYear.percentage%)</td>
                     </tr>
                     <tr>
                         <td>Total Income</td>
-                        <td>@summary.income.currentMonth</td>
-                        <td>@summary.income.differenceInMonth.absolute (@summary.income.differenceInMonth.percentage%)</td>
-                        <td>@summary.income.differenceInYear.absolute (@summary.income.differenceInYear.percentage%)</td>
+                        <td>@summary.income.currentPeriod</td>
+                        <td>@summary.income.differenceInPreviousPeriod.absolute (@summary.income.differenceInPreviousPeriod.percentage%)</td>
+                        <td>@summary.income.differenceInSamePeriodLastYear.absolute (@summary.income.differenceInSamePeriodLastYear.percentage%)</td>
                     </tr>
                     <tr>
                         <td>Total Outgoings</td>
-                        <td>@summary.outgoings.currentMonth</td>
-                        <td>@summary.outgoings.differenceInMonth.absolute
-                            (@summary.outgoings.differenceInMonth.percentage%)</td>
-                        <td>@summary.outgoings.differenceInYear.absolute
-                            (@summary.outgoings.differenceInYear.percentage%)</td>
+                        <td>@summary.outgoings.currentPeriod</td>
+                        <td>@summary.outgoings.differenceInPreviousPeriod.absolute
+                            (@summary.outgoings.differenceInPreviousPeriod.percentage%)</td>
+                        <td>@summary.outgoings.differenceInSamePeriodLastYear.absolute
+                            (@summary.outgoings.differenceInSamePeriodLastYear.percentage%)</td>
                     </tr>
                     <tr>
                         <td>Total Change</td>
-                        <td>@summary.relevantTotal.currentMonth</td>
-                        <td>@summary.relevantTotal.differenceInMonth.absolute
-                            (@summary.relevantTotal.differenceInMonth.percentage%)</td>
-                        <td>@summary.relevantTotal.differenceInYear.absolute
-                            (@summary.relevantTotal.differenceInYear.percentage%)</td>
+                        <td>@summary.relevantTotal.currentPeriod</td>
+                        <td>@summary.relevantTotal.differenceInPreviousPeriod.absolute
+                            (@summary.relevantTotal.differenceInPreviousPeriod.percentage%)</td>
+                        <td>@summary.relevantTotal.differenceInSamePeriodLastYear.absolute
+                            (@summary.relevantTotal.differenceInSamePeriodLastYear.percentage%)</td>
                     </tr>
                 </table>
             </body>
