@@ -58,9 +58,23 @@ object Summary {
       monthYearAgo = sumAll(prevYearTransactions)
     )
 
-    val income = Amount(0, 0, 0)
-    val outgoings = Amount(0, 0, 0)
-    val relevantTotal = Amount(0, 0, 0)
+    val income = Amount(
+      currentMonth = sumDeposits(transactions),
+      previousMonth = sumDeposits(prevTransactions),
+      monthYearAgo = sumDeposits(prevYearTransactions)
+    )
+
+    val outgoings = Amount(
+      currentMonth = sumPayments(transactions),
+      previousMonth = sumPayments(prevTransactions),
+      monthYearAgo = sumPayments(prevYearTransactions)
+    )
+
+    val relevantTotal = Amount(
+      currentMonth = sumAll(transactions),
+      previousMonth = sumAll(prevTransactions),
+      monthYearAgo = sumAll(prevYearTransactions)
+    )
 
     Summary(startDate,
       endDate,
@@ -90,12 +104,12 @@ case class CategorySummary(category: String, amount: Amount)
 
 case class Difference(currentValue: Double, previousValue: Double) {
 
-  val diff: Double = round(currentValue - previousValue)
+  val diff: Double = round(previousValue - currentValue)
   val absolute: Double = abs(diff)
 
   val percentage = {
     if (previousValue == 0) Int.MaxValue
-    else abs(round(diff / previousValue * 100))
+    else abs(round(diff / previousValue * 100, scale = 0))
   }
 
   val isIncrease = diff > 0
