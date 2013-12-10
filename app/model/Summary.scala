@@ -86,7 +86,6 @@ object Summary {
       income,
       outgoings,
       relevantTotal)
-  }
 }
 
 case class Summary(startDate: DateTime,
@@ -117,6 +116,7 @@ case class Difference(currentValue: Double, previousValue: Double) {
 }
 
 case class Amount(currentMonth: Double, previousMonth: Double, monthYearAgo: Double) {
+
   val differenceInMonth: Difference = Difference(currentMonth, previousMonth)
   val differenceInYear: Difference = Difference(currentMonth, monthYearAgo)
 }
