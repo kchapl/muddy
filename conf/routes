@@ -14,3 +14,5 @@ GET    /category/:cat/:subcat       controllers.Application.subcategory(cat: Str
 GET    /summary                     controllers.Application.summary
 
 GET    /import                      controllers.Application.doImport
+
+GET    /test                        controllers.Application.test()

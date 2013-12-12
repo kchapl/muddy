@@ -2,9 +2,25 @@ package controllers
 
 import play.api.mvc._
 import model.service.{ImportMSMService, ImportMDService, TransactionService}
-import model.Summary
+import model.{Test, Summary}
+import org.joda.time.DateTime
 
 object Application extends Controller {
+
+  def test() = Action {
+    // val today = new DateTime().withTimeAtStartOfDay()
+    val nov1 = new DateTime(2013, 11, 1, 0, 0)
+    val nov19 = new DateTime(2013, 11, 19, 0, 0)
+    val dec1 = new DateTime(2013, 12, 1, 0, 0)
+    Test.outgoings(nov1, nov19).foreach(println)
+
+      println(Test.sumPayments(nov1,nov19))
+      println(Test.sumOutgoings(nov1,nov19))
+      //println(Test.sumOutgoings(today.minusYears(1), today))
+    //  println(Test.sumOutgoings(today.minusYears(2), today.minusYears(1)))
+    //  Test.allCategories.foreach(println)
+    Ok("OK")
+  }
 
   def doImport() = Action {
     ImportMSMService.doImport()

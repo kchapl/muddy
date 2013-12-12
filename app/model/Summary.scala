@@ -86,6 +86,7 @@ object Summary {
       income,
       outgoings,
       relevantTotal)
+  }
 }
 
 case class Summary(startDate: DateTime,
