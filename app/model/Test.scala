@@ -29,20 +29,75 @@ object Test {
 
   def allCategories = TransactionRepository.all().map(_.category.getOrElse("none")).sorted.distinct
 
-  def period(from: DateTime, to: DateTime): Period = {
-    Period(
-      startDate = from,
-      endDate = to,
-      outgoings = sumOutgoings(from, to),
-      difference = Difference2(0, 0)
+  def periodSummary(period: Period, refPeriods: Period*): PeriodSummary = {
+    val outgoings = sumOutgoings(period.from, period.to)
+    PeriodSummary(
+      Period(period.from, period.to),
+      outgoings = Amount2(
+        outgoings,
+        differences = refPeriods.map {
+          refPeriod => difference(outgoings, sumOutgoings(refPeriod.from, refPeriod.to))
+        }.toList
+      ),
+      categorySlices = categories(period, refPeriods)
     )
   }
 
-  def difference(current:Double,reference:Double):Difference2 = {
+  def difference(current: Double, reference: Double) = {
+    val amount = reference - current
+    Difference2(
+      amount = amount,
+      percentage = {
+        if (reference == 0) {
+          999
+        } else {
+          amount / reference * 100
+        }
+      }
+    )
+  }
 
+  def categories(period: Period, refPeriods: Seq[Period]): List[CategorySlice] = {
+    val categoryTxMaps = refPeriods.map {
+      refPeriod =>
+        TransactionRepository.all().filter {
+          tx => !tx.date.isBefore(refPeriod.from) && tx.date.isBefore(refPeriod.to)
+        }.groupBy {
+          tx => tx.category.getOrElse("uncategorised")
+        }
+    }.toList
+
+    TransactionRepository.all().filter {
+      tx => !tx.date.isBefore(period.from) && tx.date.isBefore(period.to)
+    }.groupBy {
+      tx => tx.category.getOrElse("uncategorised")
+    }.map {
+      case (name, transactions) => category(name, transactions, {
+        categoryTxMaps.map(_.get(name).getOrElse(Nil))
+      })
+    }.toList
+  }
+
+  def category(name: String, transactions: Seq[Transaction], refTransactionSets: List[Seq[Transaction]]): CategorySlice = {
+    val current = transactions.map(_.amount).sum
+    CategorySlice(
+      category = name,
+      amount = Amount2(
+        amount = current,
+        differences = refTransactionSets.map {
+          refTransactions => difference(current, refTransactions.map(_.amount).sum)
+        }
+      )
+    )
   }
 }
 
+case class Period(from: DateTime, to: DateTime)
+
 case class Difference2(amount: Double, percentage: Double)
 
-case class Period(startDate: DateTime, endDate: DateTime, outgoings: Double, difference: Difference2)
+case class Amount2(amount: Double, differences: List[Difference2])
+
+case class CategorySlice(category: String, amount: Amount2)
+
+case class PeriodSummary(period: Period, outgoings: Amount2, categorySlices: List[CategorySlice])

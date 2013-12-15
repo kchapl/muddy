@@ -26,17 +26,17 @@ object YearSummary {
 
     val lastTransactionDate = transactions.lastOption.map(_.date)
 
-    val categorySummaries = {
-      transactions.groupBy(_.category).map {
-        case (cat, txs) =>
-          val category = cat getOrElse "uncategorised"
-          CategorySummary(category,
-            YearAmount(
-              currentYear = round(txs.map(_.amount).sum),
-              previousYear = round(prevTransactions.filter(_.category.exists(_ == category)).map(_.amount).sum)
-            ))
-      }.toList
-    }
+//    val categorySummaries = {
+//      transactions.groupBy(_.category).map {
+//        case (cat, txs) =>
+//          val category = cat getOrElse "uncategorised"
+//          CategorySummary(category,
+//            YearAmount(
+//              currentYear = round(txs.map(_.amount).sum),
+//              previousYear = round(prevTransactions.filter(_.category.exists(_ == category)).map(_.amount).sum)
+//            ))
+//      }.toList
+//    }
 
     val allPayments = YearAmount(
       currentYear = sumPayments(transactions),
@@ -71,7 +71,8 @@ object YearSummary {
     YearSummary(startDate,
       endDate,
       lastTransactionDate,
-      categorySummaries,
+      Nil,
+      //categorySummaries,
       allPayments,
       allDeposits,
       total,
@@ -92,21 +93,21 @@ case class YearSummary(startDate: DateTime,
                        outgoings: YearAmount,
                        relevantTotal: YearAmount)
 
-case class CategorySummary(category: String, amount: YearAmount)
+//case class CategorySummary(category: String, amount: YearAmount)
 
-case class Difference(currentValue: Double, previousValue: Double) {
+//case class Difference(currentValue: Double, previousValue: Double) {
 
-  val diff: Double = round(previousValue - currentValue)
-  val absolute: Double = abs(diff)
-
-  val percentage = {
-    if (previousValue == 0) Int.MaxValue
-    else abs(round(diff / previousValue * 100, scale = 0))
-  }
-
-  val isIncrease = diff > 0
-  val isDecrease = diff < 0
-}
+//  val diff: Double = round(previousValue - currentValue)
+//  val absolute: Double = abs(diff)
+//
+//  val percentage = {
+//    if (previousValue == 0) Int.MaxValue
+//    else abs(round(diff / previousValue * 100, scale = 0))
+//  }
+//
+//  val isIncrease = diff > 0
+//  val isDecrease = diff < 0
+//}
 
 case class YearAmount(currentYear: Double, previousYear: Double) {
 
