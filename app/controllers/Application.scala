@@ -2,9 +2,8 @@ package controllers
 
 import play.api.mvc._
 import model.service.{ImportMSMService, ImportMDService, TransactionService}
-import model.{Test, Summary}
+import model.{PeriodSummary, Summary, Period}
 import org.joda.time.DateTime
-import model.Period
 
 object Application extends Controller {
 
@@ -20,11 +19,11 @@ object Application extends Controller {
     //Test.outgoings(nov1, nov19).foreach(println)
 
     //  println(Test.sumPayments(nov1,nov19))
-    println(Test.sumOutgoings(oct1, oct19))
+    //println(Test.sumOutgoings(oct1, oct19))
     //println(Test.sumOutgoings(today.minusYears(1), today))
     //  println(Test.sumOutgoings(today.minusYears(2), today.minusYears(1)))
     //  Test.allCategories.foreach(println)
-    val x = Test.periodSummary(Period(nov1, nov19), Period(oct1, oct19), Period(nov1_2012, nov19_2012))
+    val x = PeriodSummary(Period(nov1, nov19), Period(oct1, oct19), Period(nov1_2012, nov19_2012))
     println(x)
     Ok("OK")
   }

@@ -1,0 +1,78 @@
+@(summary: model.PeriodSummary)
+@import org.joda.time.format.DateTimeFormat
+
+@present(diff: model.Difference2) = {
+<td>@if(diff.amount > 0) {
+  <span class="glyphicon glyphicon-arrow-up" style="color : red">} else {
+    @if(diff.amount < 0) {
+      <span class="glyphicon glyphicon-arrow-down" style="color : green">} else {
+        <span class="glyphicon glyphicon-minus" style="color : #FFBF00">}
+      } £@("%.2f".format(diff.amount))
+    (@("%.0f".format(diff.percentage))%)</span></td>
+}
+
+@defining(DateTimeFormat.forPattern("EEE dd MMM yyyy")) { dateFormatter =>
+    @defining(DateTimeFormat.forPattern("yyyyMMdd")) { dateParamFormatter =>
+
+    <!DOCTYPE html>
+
+        <html>
+            <head>
+                <title>Summary</title>
+                <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")" />
+            </head>
+            <body>
+                <p><b>@dateFormatter.print(summary.period.from) &mdash; @dateFormatter.print(summary.period.to)</b><br/>
+                    Last transaction: @summary.lastTransactionDate.map { date => @dateFormatter.print(date)}</p>
+                <table class="table table-striped table-condensed">
+                    @for(categorySummary <- summary.categorySlices) {
+                        <tr>
+                            <td><a href="@routes.Application.category(categorySummary.category, Some(dateParamFormatter.print(summary.period.from)), Some(dateParamFormatter.print(summary.period.to)), None)">@categorySummary.category</a></td>
+                            <td>@categorySummary.amount.amount</td>
+
+                            @for(diff <- categorySummary.amount.differences) {
+                                @present(diff)
+                            }
+
+                        </tr>
+                    }
+                    <tr>
+                        <td>Total Payments</td>
+                        <td>@summary.payments.amount.amount</td>
+                        @present(summary.allPayments.differenceInMonth)
+                        @present(summary.allPayments.differenceInYear)
+                    <tr>
+                        <td>Total Deposits</td>
+                        <td>@summary.allDeposits.currentMonth</td>
+                    @present(summary.allDeposits.differenceInMonth)
+                    @present(summary.allDeposits.differenceInYear)
+                    </tr>
+                    <tr>
+                        <td>Total Difference</td>
+                        <td>@summary.total.currentMonth</td>
+                        @present(summary.total.differenceInMonth)
+                        @present(summary.total.differenceInYear)
+                    </tr>
+                    <tr>
+                        <td>Total Income</td>
+                        <td>@summary.income.currentMonth</td>
+                        @present(summary.income.differenceInMonth)
+                        @present(summary.income.differenceInYear)
+                    </tr>
+                    <tr>
+                        <td>Total Outgoings</td>
+                        <td>@summary.outgoings.currentMonth</td>
+                        @present(summary.outgoings.differenceInMonth)
+                        @present(summary.outgoings.differenceInYear)
+                    </tr>
+                    <tr>
+                        <td>Total Change</td>
+                        <td>@summary.relevantTotal.currentMonth</td>
+                        @present(summary.relevantTotal.differenceInMonth)
+                        @present(summary.relevantTotal.differenceInYear)
+                    </tr>
+                </table>
+            </body>
+        </html>
+    }
+}
