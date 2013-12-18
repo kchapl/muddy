@@ -61,6 +61,14 @@ object PeriodSummary {
 
     def sorted(transactions: Seq[Transaction]) = transactions.sortBy(_.date.getMillis)
 
+    def deposits(p: Period) = sorted {
+      TransactionRepository.all().filter {
+        tx => isInPeriod(tx, p) && tx.amount > 0
+      }
+    }
+
+    def sumDeposits(p: Period) = deposits(p).map(_.amount).sum
+
     def payments(p: Period) = sorted {
       TransactionRepository.all().filter {
         tx => isInPeriod(tx, p) && tx.amount < 0
@@ -68,6 +76,14 @@ object PeriodSummary {
     }
 
     def sumPayments(p: Period) = payments(p).map(_.amount).sum
+
+    def income(p: Period) = sorted {
+      deposits(p).filterNot {
+        tx => transferCategories.contains(tx.category)
+      }
+    }
+
+    def sumIncome(p: Period) = income(p).map(_.amount).sum
 
     def outgoings(p: Period) = sorted {
       payments(p).filterNot {
@@ -99,16 +115,34 @@ object PeriodSummary {
     PeriodSummary(
       Period(period.from, period.to),
       lastTransactionDate = sorted(TransactionRepository.all()).lastOption.map(_.date),
+      deposits = Amount2(
+        sumDeposits(period),
+        differences = refPeriods.map {
+          refPeriod => Difference2(sumDeposits(period), sumDeposits(refPeriod))
+        }.toList
+      ),
       payments = Amount2(
         sumPayments(period),
         differences = refPeriods.map {
           refPeriod => Difference2(sumPayments(period), sumPayments(refPeriod))
         }.toList
       ),
+      income = Amount2(
+        sumIncome(period),
+        differences = refPeriods.map {
+          refPeriod => Difference2(sumIncome(period), sumIncome(refPeriod))
+        }.toList
+      ),
       outgoings = Amount2(
         sumOutgoings(period),
         differences = refPeriods.map {
           refPeriod => Difference2(sumOutgoings(period), sumOutgoings(refPeriod))
+        }.toList
+      ),
+      change = Amount2(
+        sumIncome(period) - sumOutgoings(period),
+        differences = refPeriods.map {
+          refPeriod => Difference2(sumIncome(period) - sumOutgoings(period), sumIncome(refPeriod) - sumOutgoings(refPeriod))
         }.toList
       ),
       categorySlices = categories(period, refPeriods)
@@ -118,6 +152,9 @@ object PeriodSummary {
 
 case class PeriodSummary(period: Period,
                          lastTransactionDate: Option[DateTime],
+                         deposits: Amount2,
                          payments: Amount2,
+                         income: Amount2,
                          outgoings: Amount2,
+                         change: Amount2,
                          categorySlices: List[CategorySlice])

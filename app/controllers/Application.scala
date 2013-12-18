@@ -71,8 +71,16 @@ object Application extends Controller {
     Ok(view)
   }
 
+  @deprecated
   def summary() = Action {
     Ok(views.html.summary(Summary()))
   }
 
+  def monthSummary() = Action {
+    val today = new DateTime().withTimeAtStartOfDay()
+    val currentMonth = Period(today.minusMonths(1), today)
+    val previousMonth = Period(today.minusMonths(2), today.minusMonths(1))
+    val yearOnYear = Period(today.minusYears(1).minusMonths(1), today.minusYears(1))
+    Ok(views.html.monthSummary(PeriodSummary(currentMonth, previousMonth, yearOnYear)))
+  }
 }

@@ -24,7 +24,7 @@ object TransactionRepository {
 
   def all(): Seq[Transaction] = DB.withConnection {
     implicit connection =>
-      SQL("select * from tx order by tx_date, description").as(transaction *)
+      SQL("select * from tx order by tx_date, description").as(transaction.*)
   }
 
   def persist(tx: Transaction) {
