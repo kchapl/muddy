@@ -12,6 +12,8 @@ GET    /category/:cat               controllers.Application.category(cat: String
 GET    /category/:cat/:subcat       controllers.Application.subcategory(cat: String, subcat: String, start: Option[String], end: Option[String], group: Option[String])
 
 GET    /summary                     controllers.Application.summary
+GET    /summary/month               controllers.Application.monthSummary
+GET    /summary/year                controllers.Application.yearSummary
 
 GET    /import                      controllers.Application.doImport
 

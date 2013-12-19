@@ -83,4 +83,11 @@ object Application extends Controller {
     val yearOnYear = Period(today.minusYears(1).minusMonths(1), today.minusYears(1))
     Ok(views.html.monthSummary(PeriodSummary(currentMonth, previousMonth, yearOnYear)))
   }
+
+  def yearSummary() = Action {
+    val today = new DateTime().withTimeAtStartOfDay()
+    val currentYear = Period(today.minusYears(1), today)
+    val previousYear = Period(today.minusYears(2), today.minusYears(1))
+    Ok(views.html.monthSummary(PeriodSummary(currentYear, previousYear)))
+  }
 }
