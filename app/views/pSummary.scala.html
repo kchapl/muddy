@@ -28,7 +28,7 @@
                     @for(categorySummary <- summary.categorySlices) {
                         <tr>
                             <td><a href="@routes.Application.category(categorySummary.category, Some(dateParamFormatter.print(summary.period.from)), Some(dateParamFormatter.print(summary.period.to)), None)">@categorySummary.category</a></td>
-                            <td>@categorySummary.amount.amount</td>
+                            <td>@("%.2f".format(categorySummary.amount.amount))</td>
                             @for(diff <- categorySummary.amount.differences) {
                                 @present(diff)
                             }

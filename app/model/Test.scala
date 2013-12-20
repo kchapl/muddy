@@ -28,7 +28,7 @@ case class Amount2(amount: Double, differences: List[Difference2])
 object CategorySlice {
 
   def apply(name: String, transactions: Seq[Transaction], refTransactionSets: List[Seq[Transaction]]): CategorySlice = {
-    val current = transactions.map(_.amount).sum
+    val current = round(transactions.map(_.amount).sum)
     CategorySlice(
       category = name,
       amount = Amount2(
@@ -119,6 +119,9 @@ object PeriodSummary {
     PeriodSummary(
       Period(period.from, period.to),
       lastTransactionDate = sorted(TransactionRepository.all()).lastOption.map(_.date),
+      incomeCategories = Nil,
+      spendCategories = Nil,
+      transferCategories = Nil,
       deposits = Amount2(
         sumDeposits(period),
         differences = refPeriods.map {
@@ -156,6 +159,9 @@ object PeriodSummary {
 
 case class PeriodSummary(period: Period,
                          lastTransactionDate: Option[DateTime],
+                         incomeCategories: List[CategorySlice],
+                         spendCategories: List[CategorySlice],
+                         transferCategories: List[CategorySlice],
                          deposits: Amount2,
                          payments: Amount2,
                          income: Amount2,
