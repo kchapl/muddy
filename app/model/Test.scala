@@ -41,7 +41,11 @@ object CategorySlice {
   }
 }
 
-case class CategorySlice(category: String, amount: Amount2)
+case class CategorySlice(category: String, amount: Amount2) {
+
+  val isDeposit = amount.amount > 0
+  val isPayment = amount.amount < 0
+}
 
 object PeriodSummary {
 
@@ -109,7 +113,7 @@ object PeriodSummary {
         case (name, transactions) => CategorySlice(name, transactions, {
           categoryTxMaps.map(_.get(name).getOrElse(Nil))
         })
-      }.toList
+      }.toList.sortBy(_.isDeposit)
     }
 
     PeriodSummary(
